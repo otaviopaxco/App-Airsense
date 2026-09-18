@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "AirSense",
+    "slug": "airsense-app",
+    "scheme": "airsense",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "icon": "./assets/images/icon.png",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "backgroundColor": "#0B1622"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.airsense.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "A câmera é usada para ler o QR code de identificação do seu ESP32 ao cadastrar um novo aparelho."
+      }
+    },
+    "android": {
+      "package": "com.airsense.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#0B1622"
+      },
+      "permissions": ["CAMERA", "NOTIFICATIONS"]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "O AirSense usa a câmera para ler o QR code do seu ESP32."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#22D3EE"
+        }
+      ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      }
+    }
+  }
+}
