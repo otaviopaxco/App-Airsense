@@ -11,4 +11,4 @@ Protótipo funcional do app que consome a API `API-Air-Sense`. Foco em funcional
 - **react-native-chart-kit** — gráfico de dias no dashboard da medição
 - **expo-secure-store** — nada de sensível é salvo
 
-## Como o app ainda está em fase de produção e ainda precisa necessariamente do simulador Expo Go, não serão deixados os detalhes de como construir o projeto do zero.
+`Como o app ainda está em fase de produção e ainda precisa necessariamente do simulador Expo Go, não serão deixados os detalhes de como construir o projeto do zero pois depende da API e Firebase Auth, também há de lembrar que o .env do projeto contém informações sensíveis.`
