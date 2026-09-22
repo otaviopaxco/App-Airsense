@@ -1,5 +1,7 @@
 # AirSense — App (Expo / React Native)
 
+<img width="1080" height="608" alt="AirSenseIndustria" src="https://github.com/user-attachments/assets/eafe7747-24eb-4ba5-b2de-a78c09b5857d" />
+
 Protótipo funcional do app que consome a API `API-Air-Sense`. Foco em funcionalidade e integração real com a API e Firebase Auth.
 
 ## Stack
