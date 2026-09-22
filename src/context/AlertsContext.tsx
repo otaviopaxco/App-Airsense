@@ -52,10 +52,15 @@ export function AlertsProvider({ children }: { children: React.ReactNode }) {
   }, [user, notificacoesAtivas]);
 
   // Registro do push token + permissões, assim que o usuário loga (e enquanto
-  // as notificações estiverem ativadas nas Configurações do app).
+  // as notificações estiverem ativadas nas Configurações do app). A função de
+  // limpeza roda automaticamente quando `user` ou `notificacoesAtivas` mudam
+  // (logout, troca de conta, ou desligar o toggle) — e nesses casos remove o
+  // token do servidor, para o aparelho parar de receber push.
   useEffect(() => {
     if (!user || !notificacoesAtivas) return;
     let cancelado = false;
+    let tokenRegistradoNestaSessao: string | null = null;
+    const uidDestaSessao = user.uid;
 
     (async () => {
       try {
@@ -76,7 +81,8 @@ export function AlertsProvider({ children }: { children: React.ReactNode }) {
 
         const tokenResp = await Notifications.getExpoPushTokenAsync();
         if (!cancelado) {
-          await api.registrarPushToken(user.uid, tokenResp.data);
+          await api.registrarPushToken(uidDestaSessao, tokenResp.data);
+          tokenRegistradoNestaSessao = tokenResp.data;
         }
       } catch {
         // Sem Expo push disponível (ex.: emulador sem Google Play Services) — segue sem push.
@@ -85,8 +91,11 @@ export function AlertsProvider({ children }: { children: React.ReactNode }) {
 
     return () => {
       cancelado = true;
+      if (tokenRegistradoNestaSessao) {
+        api.removerPushToken(uidDestaSessao, tokenRegistradoNestaSessao).catch(() => {});
+      }
     };
-  }, [user]);
+  }, [user, notificacoesAtivas]);
 
   // Notificação chegou com o app aberto -> abre popup + atualiza contagem
   // (só se as notificações estiverem ativadas nas Configurações do app).
@@ -97,7 +106,7 @@ export function AlertsProvider({ children }: { children: React.ReactNode }) {
     });
     // Usuário tocou na notificação (app em background/fechado) -> vai direto pros alertas.
     const subResposta = Notifications.addNotificationResponseReceivedListener(() => {
-      router.push('/(app)/alertas');
+      router.push('/(app)/(tabs)/alertas');
     });
     return () => {
       sub.remove();
@@ -123,7 +132,7 @@ export function AlertsProvider({ children }: { children: React.ReactNode }) {
         fecharPopup: () => setPopupVisivel(false),
         irParaAlertas: () => {
           setPopupVisivel(false);
-          router.push('/(app)/alertas');
+          router.push('/(app)/(tabs)/alertas');
         },
         atualizarContagem,
       }}

@@ -80,12 +80,12 @@ export default function VisaoGeralScreen() {
           </View>
 
           <View style={styles.acoes}>
-            <Pressable style={styles.acaoBotao} onPress={() => router.push('/(app)/aparelhos')}>
+            <Pressable style={styles.acaoBotao} onPress={() => router.push('/(app)/(tabs)/aparelhos')}>
               <Ionicons name="hardware-chip-outline" size={18} color={colors.accent} />
               <Text style={styles.acaoTexto}>Ver aparelhos</Text>
               <Ionicons name="chevron-forward" size={16} color={colors.text.muted} />
             </Pressable>
-            <Pressable style={styles.acaoBotao} onPress={() => router.push('/(app)/alertas')}>
+            <Pressable style={styles.acaoBotao} onPress={() => router.push('/(app)/(tabs)/alertas')}>
               <Ionicons name="notifications-outline" size={18} color={colors.accent} />
               <Text style={styles.acaoTexto}>Ver alertas ativos</Text>
               <Ionicons name="chevron-forward" size={16} color={colors.text.muted} />

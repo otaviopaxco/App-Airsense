@@ -43,10 +43,10 @@ export default function DispositivoDetalheScreen() {
   const [sensorSelecionado, setSensorSelecionado] = useState<TipoSensor | null>(null);
 
   const carregar = useCallback(async () => {
-    if (!id) return;
+    if (!id || !user) return;
     setErro(null);
     try {
-      const [dados, alertasResp] = await Promise.all([api.getDispositivo(id), api.getAlertas(undefined, id)]);
+      const [dados, alertasResp] = await Promise.all([api.getDispositivo(id), api.getAlertas(user.uid, undefined, id)]);
       setDispositivo(dados);
       setAlertasDoDispositivo(alertasResp.alertas);
       setNomeRascunho(dados.nome);
@@ -55,7 +55,7 @@ export default function DispositivoDetalheScreen() {
     } finally {
       setCarregando(false);
     }
-  }, [id]);
+  }, [id, user]);
 
   useFocusEffect(
     useCallback(() => {

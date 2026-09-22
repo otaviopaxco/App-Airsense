@@ -5,7 +5,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { GradientScreen } from '../../../src/components/GradientScreen';
 import { useAuth } from '../../../src/context/AuthContext';
 import { usePreferences } from '../../../src/context/PreferencesContext';
-import { api } from '../../../src/lib/api';
 import { colors } from '../../../src/theme/colors';
 
 export default function ConfiguracoesScreen() {
@@ -13,22 +12,6 @@ export default function ConfiguracoesScreen() {
   const { notificacoesAtivas, alternarNotificacoes } = usePreferences();
 
   const versao = Constants.expoConfig?.version ?? '1.0.0';
-
-  async function aoAlternarNotificacoes(valor: boolean) {
-    await alternarNotificacoes(valor);
-    // Se o usuário desligou, também removemos o push token no servidor —
-    // assim ele para de receber notificações mesmo se abrir o app de novo
-    // antes de reativar (o token só é registrado de novo quando ligar aqui).
-    if (!valor && user) {
-      try {
-        const { getExpoPushTokenAsync } = await import('expo-notifications');
-        const tokenResp = await getExpoPushTokenAsync();
-        await api.removerPushToken(user.uid, tokenResp.data);
-      } catch {
-        // sem push registrado ainda / sem permissão — nada a remover.
-      }
-    }
-  }
 
   function confirmarSaida() {
     Alert.alert('Sair da conta', 'Tem certeza que deseja sair?', [
@@ -61,7 +44,7 @@ export default function ConfiguracoesScreen() {
           </View>
           <Switch
             value={notificacoesAtivas}
-            onValueChange={aoAlternarNotificacoes}
+            onValueChange={alternarNotificacoes}
             trackColor={{ true: colors.accent, false: colors.cardBorder }}
             thumbColor="#fff"
           />

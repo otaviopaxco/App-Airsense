@@ -70,12 +70,11 @@ export const api = {
     }),
 
   // --- Alertas ---
-  getAlertas: (status?: 'ativos' | 'dispensados', dispositivoId?: string) => {
-    const params = new URLSearchParams();
+  getAlertas: (usuarioId: string, status?: 'ativos' | 'dispensados', dispositivoId?: string) => {
+    const params = new URLSearchParams({ usuarioId });
     if (status) params.set('status', status);
     if (dispositivoId) params.set('dispositivoId', dispositivoId);
-    const qs = params.toString();
-    return request<AlertasResponse>(`/alertas/lista${qs ? `?${qs}` : ''}`);
+    return request<AlertasResponse>(`/alertas/lista?${params.toString()}`);
   },
 
   dispensarAlerta: (id: string) =>

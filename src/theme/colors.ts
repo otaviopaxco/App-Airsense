@@ -1,6 +1,4 @@
-// Paleta inspirada na referência (navy escuro + gradiente teal/ciano),
-// mas com mais profundidade: 3 tons de fundo, glass cards com borda sutil
-// e uma cor de destaque por status, usada em pills, barras e ícones.
+
 
 export const colors = {
   bg: {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View, Image } from 'react-native';
 import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { GradientScreen } from '../../src/components/GradientScreen';
@@ -37,7 +37,10 @@ export default function LoginScreen() {
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
           <View style={styles.logoBox}>
             <View style={styles.logoIcone}>
-              <Ionicons name="partly-sunny-outline" size={40} color={colors.accent} />
+              <Image 
+                source={require('../../assets/images/adaptive-icon.png')} // Altere para o nome do seu arquivo
+                style={styles.logoPng} 
+              />
             </View>
             <Text style={styles.marca}>AirSense</Text>
             <Text style={styles.slogan}>Monitoramento de qualidade do ar</Text>
@@ -68,7 +71,7 @@ export default function LoginScreen() {
 
           <View style={styles.rodape}>
             <Text style={styles.rodapeTexto}>Não possui uma conta?</Text>
-            <Link href="/(auth)/signup" style={styles.rodapeLink}>
+            <Link href="/(auth)/signup" replace style={styles.rodapeLink}>
               Criar conta
             </Link>
           </View>
@@ -82,8 +85,8 @@ const styles = StyleSheet.create({
   container: { flexGrow: 1, padding: 24, justifyContent: 'center' },
   logoBox: { alignItems: 'center', marginBottom: 32 },
   logoIcone: {
-    width: 76,
-    height: 76,
+    width: 80,
+    height: 80,
     borderRadius: 24,
     backgroundColor: colors.accentSoft,
     alignItems: 'center',
@@ -105,4 +108,9 @@ const styles = StyleSheet.create({
   rodape: { flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 24 },
   rodapeTexto: { color: colors.text.secondary, fontSize: 13 },
   rodapeLink: { color: colors.accent, fontSize: 13, fontWeight: '700' },
+  logoPng: {
+    width: 70,          // Mesma largura do tamanho do Ionicons anterior
+    height: 70,         // Mesma altura do tamanho do Ionicons anterior
+    resizeMode: 'contain', // Garante que a imagem não fique distorcida
+  },
 });

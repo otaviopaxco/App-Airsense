@@ -6,6 +6,7 @@ import { GradientScreen } from '../../../src/components/GradientScreen';
 import { AlertCard } from '../../../src/components/AlertCard';
 import { SearchFilterBar } from '../../../src/components/SearchFilterBar';
 import { api } from '../../../src/lib/api';
+import { useAuth } from '../../../src/context/AuthContext';
 import { useAlerts } from '../../../src/context/AlertsContext';
 import { SENSORES } from '../../../src/constants/sensors';
 import type { Alerta } from '../../../src/types';
@@ -17,6 +18,7 @@ const OPCOES_TIPO = [
 ];
 
 export default function AlertasScreen() {
+  const { user } = useAuth();
   const { atualizarContagem } = useAlerts();
   const [aba, setAba] = useState<'ativos' | 'dispensados'>('ativos');
   const [alertas, setAlertas] = useState<Alerta[]>([]);
@@ -28,10 +30,11 @@ export default function AlertasScreen() {
 
   const carregar = useCallback(
     async (viaPullToRefresh = false) => {
+      if (!user) return;
       viaPullToRefresh ? setAtualizando(true) : setCarregando(true);
       setErro(null);
       try {
-        const resposta = await api.getAlertas(aba);
+        const resposta = await api.getAlertas(user.uid, aba);
         setAlertas(resposta.alertas);
       } catch {
         setErro('Não foi possível carregar os alertas.');
@@ -40,7 +43,7 @@ export default function AlertasScreen() {
         setAtualizando(false);
       }
     },
-    [aba]
+    [user, aba]
   );
 
   useFocusEffect(

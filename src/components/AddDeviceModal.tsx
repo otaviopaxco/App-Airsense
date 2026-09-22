@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,6 +23,13 @@ export function AddDeviceModal({ visible, onClose, onAdded }: Props) {
   const [permissao, solicitarPermissao] = useCameraPermissions();
   const [jaLido, setJaLido] = useState(false);
 
+  useEffect(() => {
+    if (visible) {
+      setJaLido(false);
+      setErro(null);
+    }
+  }, [visible]);
+
   async function vincular(id: string) {
     if (!user || !id.trim()) return;
     setCarregando(true);
@@ -35,6 +42,7 @@ export function AddDeviceModal({ visible, onClose, onAdded }: Props) {
       onClose();
     } catch (err) {
       setErro(err instanceof ApiError ? err.message : 'Não foi possível adicionar o dispositivo.');
+      setJaLido(false); // permite tentar escanear de novo sem fechar o modal
     } finally {
       setCarregando(false);
     }
@@ -42,6 +50,7 @@ export function AddDeviceModal({ visible, onClose, onAdded }: Props) {
 
   function abrirCamera() {
     setErro(null);
+    setJaLido(false);
     setModo('camera');
     if (!permissao?.granted) solicitarPermissao();
   }
@@ -105,7 +114,7 @@ export function AddDeviceModal({ visible, onClose, onAdded }: Props) {
                         ? undefined
                         : ({ data }) => {
                             setJaLido(true);
-                            vincular(data);
+                            vincular(data.trim());
                           }
                     }
                   />

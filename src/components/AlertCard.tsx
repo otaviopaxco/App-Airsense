@@ -22,7 +22,15 @@ export function AlertCard({ alerta, onDispensado }: { alerta: Alerta; onDispensa
       await api.dispensarAlerta(alerta.id);
       onDispensado();
     } catch (err) {
-      setErro(err instanceof ApiError ? err.message : 'Falha ao dispensar.');
+      if (err instanceof ApiError) {
+        // Em 409 (alerta ainda ativo), a API manda o motivo específico em
+        // `detalhes` (ver ApiError em lib/api.ts) — mais útil pro usuário
+        // do que o texto genérico "Alerta ainda ativo.".
+        const motivo = typeof err.detalhes === 'string' ? err.detalhes : null;
+        setErro(motivo || err.message);
+      } else {
+        setErro('Falha ao dispensar.');
+      }
     } finally {
       setCarregando(false);
     }

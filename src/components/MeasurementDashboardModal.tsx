@@ -29,7 +29,7 @@ const JANELAS = [
 
 export function MeasurementDashboardModal({ visible, onClose, dispositivoId, tipo, valorAtual, ultimoAlerta }: Props) {
   const [carregando, setCarregando] = useState(true);
-  const [pontos, setPontos] = useState<{ hora: string; valor: number }[]>([]);
+  const [pontos, setPontos] = useState<{ instante: string; valor: number }[]>([]);
   const [janela, setJanela] = useState<(typeof JANELAS)[number]>(JANELAS[3]);
 
   const meta = SENSORES[tipo];
@@ -49,9 +49,15 @@ export function MeasurementDashboardModal({ visible, onClose, dispositivoId, tip
       .then((horarias: Record<string, LeituraHoraria>) => {
         if (!ativo) return;
         const lista = Object.entries(horarias)
-          .filter(([, h]) => typeof h[tipo] === 'number')
+          .filter(([, h]) => typeof h[tipo] === 'number' && typeof h.timestampInicio === 'string')
           .sort(([a], [b]) => a.localeCompare(b))
-          .map(([hourKey, h]) => ({ hora: hourKey, valor: h[tipo] as number }));
+          // timestampInicio já vem em ISO com "Z" (UTC) — é isso que garante
+          // que o `new Date(...)` seja interpretado corretamente e, ao
+          // formatar, o date-fns mostre automaticamente no fuso local do
+          // aparelho. Reconstruir a partir da chave "hourKey" (sem "Z")
+          // fazia o JS ler a hora UTC como se já fosse hora local, o que
+          // deslocava todo o gráfico pelo fuso horário do usuário.
+          .map(([, h]) => ({ instante: h.timestampInicio as string, valor: h[tipo] as number }));
         setPontos(lista);
       })
       .catch(() => setPontos([]))
@@ -117,7 +123,7 @@ export function MeasurementDashboardModal({ visible, onClose, dispositivoId, tip
                 data={{
                   labels: amostraGrafico
                     .filter((_, i) => i % Math.ceil(amostraGrafico.length / 6) === 0)
-                    .map((p) => format(new Date(`${p.hora}:00:00`), 'HH:mm', { locale: ptBR })),
+                    .map((p) => format(new Date(p.instante), janela.horas > 24 ? 'dd/MM HH:mm' : 'HH:mm', { locale: ptBR })),
                   datasets: [{ data: amostraGrafico.map((p) => p.valor) }],
                 }}
                 width={LARGURA_TELA - 72}
